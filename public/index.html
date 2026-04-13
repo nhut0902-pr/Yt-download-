@@ -2,50 +2,74 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>HACKER YT ON RENDER - PHÁ NGUYÊN BẢN</title>
+    <title>HACKER YT BACKEND PRO - PHÁ NGUYÊN BẢN 2026</title>
     <style>
         body { background:#000; color:#0f0; font-family:Courier New; text-align:center; padding:20px; }
         h1 { color:#f00; text-shadow:0 0 20px red; }
-        input { width:90%; padding:15px; background:#111; border:3px solid #0f0; color:#0f0; }
+        input { width:90%; padding:15px; background:#111; border:3px solid #0f0; color:#0f0; font-size:16px; }
         button { padding:15px 30px; background:#f00; color:#fff; border:none; font-size:18px; margin:10px; cursor:pointer; }
         button:hover { background:#0f0; color:#000; }
-        #result { margin:30px auto; max-width:800px; background:#111; padding:20px; border:2px solid #0f0; text-align:left; }
+        #result { margin:30px auto; max-width:800px; background:#111; padding:20px; border:2px solid #0f0; text-align:left; word-break:break-all; }
     </style>
 </head>
 <body>
-    <h1>🔥 YT HACKER BACKEND - LIVE TRÊN RENDER</h1>
-    <input type="text" id="url" placeholder="Dán link YouTube vô đây thằng ngu..." />
+    <h1>🔥 HACKER YT ON RENDER - PHÁ MẸ YT NGUYÊN BẢN</h1>
+    <input type="text" id="url" placeholder="Dán link YouTube vô đây thằng ngu... ví dụ: https://youtu.be/abc123" style="width:85%"/>
     <br><br>
-    <button onclick="getInfo()">HACK INFO & FORMATS</button>
-    <button onclick="downloadBest()">TẢI BEST NGUYÊN BẢN</button>
+    <button onclick="getInfo()">1. HACK INFO & FORMATS</button>
+    <button onclick="downloadBest()">2. TẢI BEST NGUYÊN BẢN (mp4)</button>
     
     <div id="result"></div>
 
     <script>
-        const baseUrl = window.location.origin;  // tự động lấy domain Render
+        // Lấy domain Render tự động, không cần hardcode
+        const baseUrl = window.location.origin;
 
         async function getInfo() {
-            const urlInput = document.getElementById('url').value;
-            const result = document.getElementById('result');
-            result.innerHTML = '<p style="color:yellow">Đang hack info...</p>';
-            
+            const urlInput = document.getElementById('url').value.trim();
+            const resultDiv = document.getElementById('result');
+            if (!urlInput) {
+                resultDiv.innerHTML = '<p style="color:red">Đụ mày dán link YT vô trước đi con ngu!</p>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<p style="color:yellow">Đang hack info từ YouTube... chờ tao phá...</p>';
+
             try {
                 const res = await fetch(`\( {baseUrl}/hack-info?url= \){encodeURIComponent(urlInput)}`);
                 const data = await res.json();
-                let html = `<h2>${data.title || 'Không tên'}</h2>`;
-                data.formats.forEach(f => {
-                    html += `<p>▶ ${f.resolution} - \( {f.filesize}MB <a href=" \){f.url}" target="_blank">TẢI NGUYÊN BẢN</a></p>`;
-                });
-                result.innerHTML = html;
+
+                if (data.error) throw data.error;
+
+                let html = `<h2>✅ ${data.title || 'Video không tên'}</h2>`;
+                if (data.formats && data.formats.length > 0) {
+                    data.formats.forEach(f => {
+                        html += `<p>▶ ${f.resolution} - ${f.filesize}MB 
+                            <a href="${f.url}" target="_blank" style="color:#0ff">TẢI NGUYÊN BẢN</a></p>`;
+                    });
+                } else {
+                    html += '<p>Không tìm thấy format, thử nút TẢI BEST đi.</p>';
+                }
+                resultDiv.innerHTML = html;
             } catch(e) {
-                result.innerHTML = `<p style="color:red">Lỗi: ${e.message}</p>`;
+                resultDiv.innerHTML = `<p style="color:orange">Hack info fail: ${e}<br>Thử link khác hoặc rep tao "link die".</p>`;
             }
         }
 
         function downloadBest() {
-            const urlInput = document.getElementById('url').value;
-            if (urlInput) window.open(`\( {baseUrl}/download?url= \){encodeURIComponent(urlInput)}`, '_blank');
+            const urlInput = document.getElementById('url').value.trim();
+            if (!urlInput) {
+                alert("Đụ mày dán link YT vô trước!");
+                return;
+            }
+            // Mở link tải trực tiếp (server sẽ trả về link yt-dlp best)
+            window.open(`\( {baseUrl}/download?url= \){encodeURIComponent(urlInput)}`, '_blank');
         }
+
+        // Nhấn Enter cũng hack luôn
+        document.getElementById('url').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') getInfo();
+        });
     </script>
 </body>
 </html>
