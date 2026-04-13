@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>HACKER YT ON RENDER - PHÁ NGUYÊN BẢN</title>
+    <style>
+        body { background:#000; color:#0f0; font-family:Courier New; text-align:center; padding:20px; }
+        h1 { color:#f00; text-shadow:0 0 20px red; }
+        input { width:90%; padding:15px; background:#111; border:3px solid #0f0; color:#0f0; }
+        button { padding:15px 30px; background:#f00; color:#fff; border:none; font-size:18px; margin:10px; cursor:pointer; }
+        button:hover { background:#0f0; color:#000; }
+        #result { margin:30px auto; max-width:800px; background:#111; padding:20px; border:2px solid #0f0; text-align:left; }
+    </style>
+</head>
+<body>
+    <h1>🔥 YT HACKER BACKEND - LIVE TRÊN RENDER</h1>
+    <input type="text" id="url" placeholder="Dán link YouTube vô đây thằng ngu..." />
+    <br><br>
+    <button onclick="getInfo()">HACK INFO & FORMATS</button>
+    <button onclick="downloadBest()">TẢI BEST NGUYÊN BẢN</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const baseUrl = window.location.origin;  // tự động lấy domain Render
+
+        async function getInfo() {
+            const urlInput = document.getElementById('url').value;
+            const result = document.getElementById('result');
+            result.innerHTML = '<p style="color:yellow">Đang hack info...</p>';
+            
+            try {
+                const res = await fetch(`\( {baseUrl}/hack-info?url= \){encodeURIComponent(urlInput)}`);
+                const data = await res.json();
+                let html = `<h2>${data.title || 'Không tên'}</h2>`;
+                data.formats.forEach(f => {
+                    html += `<p>▶ ${f.resolution} - \( {f.filesize}MB <a href=" \){f.url}" target="_blank">TẢI NGUYÊN BẢN</a></p>`;
+                });
+                result.innerHTML = html;
+            } catch(e) {
+                result.innerHTML = `<p style="color:red">Lỗi: ${e.message}</p>`;
+            }
+        }
+
+        function downloadBest() {
+            const urlInput = document.getElementById('url').value;
+            if (urlInput) window.open(`\( {baseUrl}/download?url= \){encodeURIComponent(urlInput)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
