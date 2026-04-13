@@ -1,67 +1,66 @@
 const express = require('express');
 const cors = require('cors');
-const youtubedl = require('youtube-dl-exec');
+const { exec } = require('child_process');
+const path = require('path');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.static('public'));
 
 const PORT = process.env.PORT || 3000;
 
-console.log('🚀 Hacker YT Backend đang chạy... Phá mẹ YouTube!');
+console.log('🚀 Hacker YT Docker Backend - Phá mẹ YouTube 2026!');
 
-app.get('/hack-info', async (req, res) => {
+app.get('/hack-info', (req, res) => {
     const url = req.query.url;
-    if (!url) return res.status(400).json({ error: "Đụ mày, dán link YT vô đi thằng ngu!" });
+    if (!url) return res.status(400).json({ error: "Đụ mày dán link YT vô!" });
 
-    try {
-        console.log(`Đang hack info: ${url}`);
-        const info = await youtubedl(url, {
-            dumpJson: true,
-            noWarnings: true,
-            quiet: true
-        });
+    const command = `yt-dlp --dump-json --no-warnings "${url}"`;
 
-        const data = typeof info === 'string' ? JSON.parse(info) : info;
-
-        res.json({
-            title: data.title || "Không biết tên",
-            thumbnail: data.thumbnail,
-            formats: data.formats
-                ?.filter(f => (f.ext === 'mp4' || f.ext === 'webm') && f.url)
-                .map(f => ({
-                    resolution: f.resolution || f.format_note || `${f.width || '?'}p`,
-                    filesize: f.filesize ? (f.filesize / (1024*1024)).toFixed(1) : '?',
-                    url: f.url
-                })) || []
-        });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: "YouTube chống hack vl: " + e.message + " - Thử lại hoặc dùng cookie sau." });
-    }
+    exec(command, { maxBuffer: 1024 * 1024 * 100 }, (err, stdout, stderr) => {
+        if (err) {
+            console.error(stderr);
+            return res.status(500).json({ error: "YouTube chống hack: " + (stderr || err.message) });
+        }
+        try {
+            const data = JSON.parse(stdout);
+            res.json({
+                title: data.title,
+                formats: data.formats
+                    .filter(f => (f.ext === 'mp4' || f.ext === 'webm') && f.url)
+                    .map(f => ({
+                        resolution: f.resolution || f.format_note || 'unknown',
+                        filesize: f.filesize ? (f.filesize / 1048576).toFixed(1) : '?',
+                        url: f.url
+                    }))
+            });
+        } catch (e) {
+            res.status(500).json({ error: "Parse lỗi vl" });
+        }
+    });
 });
 
-app.get('/download', async (req, res) => {
+app.get('/download', (req, res) => {
     const url = req.query.url;
     if (!url) return res.status(400).send("Link đâu thằng ngu?");
 
     res.setHeader('Content-Type', 'text/plain');
-    res.write('🔥 Đang hack link tải nguyên bản cao nhất...\n');
+    res.write('🔥 Đang hack link tải nguyên bản cao nhất...\n\n');
 
-    try {
-        const directUrl = await youtubedl(url, {
-            getUrl: true,
-            format: 'bestvideo+bestaudio/best',
-            noWarnings: true
-        });
+    // Lấy link tốt nhất (bestvideo + bestaudio)
+    const command = `yt-dlp -f "bestvideo+bestaudio/best" --get-url --no-warnings "${url}"`;
 
-        res.write(`✅ Link tải mạnh nhất (copy dán vào trình duyệt để tải):\n${directUrl.trim()}\n`);
-        res.end('\nPhá thành công! Cặc lồn YouTube. Nếu link die nhanh thì rep tao thêm cookie.');
-    } catch (e) {
-        res.end('Hack fail: ' + e.message);
-    }
+    exec(command, (err, stdout, stderr) => {
+        if (err) {
+            res.end('Hack fail: ' + (stderr || err.message));
+            return;
+        }
+        const directUrl = stdout.trim();
+        res.write(`✅ Link tải mạnh nhất (copy dán vào trình duyệt tải ngay):\n${directUrl}\n\n`);
+        res.end('Phá thành công! Nếu link die nhanh thì rep tao thêm cookie.');
+    });
 });
 
 app.listen(PORT, () => {
-    console.log(`✅ Server hacker chạy trên Render - https://your-app.onrender.com`);
+    console.log(`✅ Server chạy trên Docker Render port ${PORT}`);
 });
