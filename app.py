@@ -42,6 +42,11 @@ def download():
         "quiet": True,
         "noplaylist": True,
         "socket_timeout": 15, # 15 seconds connection timeout
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "ios"]
+            }
+        }
     }
 
     # Automatically write cookies.txt from environment variable if present (best practice for Render)
