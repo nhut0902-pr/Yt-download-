@@ -9,3 +9,4 @@ env/
 .env
 .DS_Store
 *.log
+cookies_base64.txt
