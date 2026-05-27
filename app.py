@@ -42,6 +42,11 @@ def download():
         "quiet": True,
         "noplaylist": True,
         "socket_timeout": 15, # 15 seconds connection timeout
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["tv", "web_embedded"]
+            }
+        }
     }
 
     cookie_file = "cookies.txt"
