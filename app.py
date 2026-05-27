@@ -37,18 +37,14 @@ def download():
     
     import yt_dlp
 
-    cookie_file = "cookies.txt"
+    # Base options
     ydl_opts = {
         "quiet": True,
         "noplaylist": True,
         "socket_timeout": 15, # 15 seconds connection timeout
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["android", "ios"]
-            }
-        }
     }
 
+    cookie_file = "cookies.txt"
     # Automatically write cookies.txt from environment variable if present (best practice for Render)
     cookies_b64 = os.environ.get("COOKIES_B64")
     if cookies_b64:
@@ -62,12 +58,24 @@ def download():
         except Exception as e:
             logger.error(f"Failed to decode COOKIES_B64: {str(e)}")
 
-    # Check for cookies file to bypass bot protection
-    if os.path.exists(cookie_file) and os.path.getsize(cookie_file) > 0:
-        ydl_opts["cookiefile"] = cookie_file
-        logger.info("Using cookies.txt for request authentication.")
+    # Check if URL is YouTube to apply specific bypass rules
+    is_youtube = "youtube.com" in url.lower() or "youtu.be" in url.lower()
+
+    if is_youtube:
+        logger.info("YouTube URL detected. Using mobile clients (android, ios) without cookies to bypass signature and bot checks.")
+        # YouTube on datacenter IPs works best using android/ios clients and NO cookies (since mobile clients don't support cookies)
+        ydl_opts["extractor_args"] = {
+            "youtube": {
+                "player_client": ["android", "ios"]
+            }
+        }
     else:
-        logger.warning("cookies.txt not found or is empty. Proceeding without authentication cookies.")
+        # For non-YouTube platforms (TikTok, FB, IG, Twitter), use cookies if available
+        if os.path.exists(cookie_file) and os.path.getsize(cookie_file) > 0:
+            ydl_opts["cookiefile"] = cookie_file
+            logger.info("Using cookies.txt for request authentication on non-YouTube platform.")
+        else:
+            logger.warning("cookies.txt not found or is empty. Proceeding without authentication cookies.")
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
