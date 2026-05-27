@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapDown - Tải Video TikTok, YouTube, FB, IG, Twitter Không Watermark</title>
+    <meta name="description" content="Trình tải video đa nền tảng miễn phí, không logo/watermark. Hỗ trợ YouTube, TikTok, Facebook, Instagram, Twitter/X với tốc độ cao.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="background-decor">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">Snap<span class="gradient-text">Down</span></span>
+            </div>
+            <p class="tagline">Tải video độ phân giải cao từ YouTube, TikTok, Facebook, Instagram, X</p>
+        </header>
+
+        <!-- Main Card Downloader -->
+        <main class="downloader-card">
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <!-- Link Icon -->
+                    <span class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    </span>
+                    <input type="text" id="video-url" placeholder="Dán liên kết video vào đây..." aria-label="Video URL">
+                    <button id="btn-paste" class="btn-secondary" title="Dán từ Clipboard">
+                        <span>Dán</span>
+                    </button>
+                </div>
+                <button id="btn-submit" class="btn-primary">
+                    <span class="btn-text">Tải Ngay</span>
+                    <span class="spinner hidden"></span>
+                </button>
+            </div>
+
+            <!-- Supporting Platforms Badges -->
+            <div class="supported-platforms">
+                <span class="platform-badge youtube">YouTube</span>
+                <span class="platform-badge tiktok">TikTok</span>
+                <span class="platform-badge facebook">Facebook</span>
+                <span class="platform-badge instagram">Instagram</span>
+                <span class="platform-badge twitter">Twitter / X</span>
+            </div>
+        </main>
+
+        <!-- Dynamic Results Card (Hidden by default) -->
+        <section id="result-card" class="result-card hidden">
+            <div class="result-content">
+                <div class="thumbnail-wrapper">
+                    <img id="res-thumbnail" src="" alt="Thumbnail Video">
+                </div>
+                <div class="info-wrapper">
+                    <h2 id="res-title" class="video-title">Tiêu đề video</h2>
+                    <div class="actions-group">
+                        <a id="res-download-link" href="" target="_blank" download class="btn-primary btn-download" rel="noreferrer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Tải Xuống
+                        </a>
+                        <button id="btn-copy-url" class="btn-secondary btn-copy">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            Sao Chép Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Script File -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
